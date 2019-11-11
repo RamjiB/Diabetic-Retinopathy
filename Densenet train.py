@@ -65,16 +65,13 @@ class Metrics(Callback):
     def on_epoch_end(self, epoch):
         X_val, y_val = self.validation_data[:2]
         y_val = y_val.sum(axis=1) - 1
-        
         y_pred = self.model.predict(X_val) > 0.5
         y_pred = y_pred.astype(int).sum(axis=1) - 1
-
         _val_kappa = cohen_kappa_score(
             y_val,
             y_pred,
             weights='quadratic'
         )
-
         self.val_kappas.append(_val_kappa)
         print(f"val_kappa: {_val_kappa:.4f}")
         if _val_kappa == max(self.val_kappas):
