@@ -2,32 +2,23 @@
 # coding: utf-8
 
 # In[1]:
-
-
-import json
-import math
-import os
-
 import cv2
-from PIL import Image
 import numpy as np
 from keras import layers
 from keras.applications import DenseNet121
-from keras.callbacks import Callback, ModelCheckpoint
+from keras.callbacks import Callback
 from keras.preprocessing.image import ImageDataGenerator
 from keras.models import Sequential
 from keras.optimizers import Adam
-import matplotlib.pyplot as plt
 import pandas as pd
 from sklearn.model_selection import train_test_split
-from sklearn.metrics import cohen_kappa_score, accuracy_score
-import scipy
+from sklearn.metrics import cohen_kappa_score
 import tensorflow as tf
 from tqdm import tqdm
 
 #get_ipython().run_line_magic('matplotlib', 'inline')
 import warnings
-#warnings.filterwarnings("ignore")
+warnings.filterwarnings("ignore")
 
 
 # In[2]:
@@ -118,8 +109,8 @@ print("Multilabel version:", y_train_multi.sum(axis=0))
 
 
 x_train, x_val, y_train, y_val = train_test_split(
-    x_train, y_train_multi, 
-    test_size=0.15, 
+    x_train, y_train_multi,
+    test_size=0.15,
     random_state=2019
 )
 
@@ -147,10 +138,10 @@ data_generator = create_datagen().flow(x_train, y_train, batch_size=BATCH_SIZE, 
 
 
 class Metrics(Callback):
-    def on_train_begin(self, logs={}):
+    def on_train_begin(self):
         self.val_kappas = []
 
-    def on_epoch_end(self, epoch, logs={}):
+    def on_epoch_end(self, epoch):
         X_val, y_val = self.validation_data[:2]
         y_val = y_val.sum(axis=1) - 1
         
@@ -159,7 +150,7 @@ class Metrics(Callback):
 
         _val_kappa = cohen_kappa_score(
             y_val,
-            y_pred, 
+            y_pred,
             weights='quadratic'
         )
 
@@ -202,7 +193,6 @@ def build_model():
         optimizer=Adam(lr=0.00005),
         metrics=['accuracy']
     )
-    
     return model
 
 
