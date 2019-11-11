@@ -187,7 +187,6 @@ def build_model():
     model.add(layers.Dense(256,activation = 'relu'))
     model.add(layers.Dropout(0.5))
     model.add(layers.Dense(5, activation='sigmoid'))
-    
     model.compile(
         loss='binary_crossentropy',
         optimizer=Adam(lr=0.00005),
