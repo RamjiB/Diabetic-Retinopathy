@@ -155,13 +155,10 @@ class Metrics(Callback):
         )
 
         self.val_kappas.append(_val_kappa)
-
         print(f"val_kappa: {_val_kappa:.4f}")
-        
         if _val_kappa == max(self.val_kappas):
             print("Validation Kappa has improved. Saving model.")
             self.model.save('model_224_gaussian_blur_512_256.h5')
-
         return
 
 
