@@ -51,11 +51,9 @@ def get_data(img_path,image_csv):
         X.append(cv2.resize(img,(256,256)))
         Y.append(image_csv['diagnosis'][i])
         bar.next()
-    bar.finish()  
+    bar.finish()
     return np.array(X),np.array(Y)
-    
 
-    
 train_X,train_Y = get_data(train_path,train_csv)
 print('train_X max value: ',train_X.max())
 train_X = train_X/255.0
