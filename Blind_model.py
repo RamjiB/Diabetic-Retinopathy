@@ -6,27 +6,18 @@
 
 import pandas as pd
 import numpy as np
-import keras
 from tqdm import tqdm_notebook
 from progress.bar import Bar
-from sklearn.preprocessing import Normalizer
 from sklearn.model_selection import train_test_split
-from glob import glob
 import os,cv2
-import matplotlib.pyplot as plt
-
-from sklearn.model_selection import train_test_split
-
-from keras.preprocessing.image import ImageDataGenerator
-from keras.layers import Dropout,Dense,Flatten,GlobalAveragePooling2D
+from keras.layers import Dropout,Dense,GlobalAveragePooling2D
 from keras.models import Model
 from keras.applications.vgg19 import VGG19
 from keras.applications.densenet import DenseNet121
 from keras.applications.inception_v3 import InceptionV3
 from keras.applications.mobilenet import MobileNet
 from keras.applications.xception import Xception
-#from keras.applications.resnet_v2 import ResNet50V2,ResNet101V2
-from keras.callbacks import ModelCheckpoint,CSVLogger,ReduceLROnPlateau
+from keras.callbacks import ModelCheckpoint,CSVLogger
 from keras.optimizers import Adam,RMSprop
 from keras.utils import to_categorical
 
@@ -60,9 +51,9 @@ def get_data(img_path,image_csv):
         X.append(cv2.resize(img,(256,256)))
         Y.append(image_csv['diagnosis'][i])
         bar.next()
-        
+    bar.finish()   
     return np.array(X),np.array(Y)
-    bar.finish()
+    
 
     
 train_X,train_Y = get_data(train_path,train_csv)
@@ -99,7 +90,6 @@ def pretrained_model(model,img_shape,trainable = False,weights = None,optim='ada
     x = Dense(128,activation='relu')(x)
     x = Dropout(0.25)(x)
     predictions = Dense(2,activation='softmax')(x)
-    
     model = Model(base_model.input,predictions)
     print(model.summary())
 
@@ -131,7 +121,7 @@ del train_X,train_Y
 np.save('X_va',X_va)
 np.save('Y_va',Y_va)
 def to_binary(data):
-	for i in range(len(data)):
+	for i,_ in enumerate(data):
 		if data[i] != 0:
 			data[i] = 1
 	return np.array(data)
@@ -140,7 +130,7 @@ Y_tr = to_binary(Y_tr)
 Y_va = to_binary(Y_va)
 
 print(Y_tr.shape)
-print(Y_va.shape) 
+print(Y_va.shape)
 Y_tr = to_categorical(Y_tr)
 Y_va = to_categorical(Y_va)
 
