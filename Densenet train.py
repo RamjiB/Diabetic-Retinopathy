@@ -3,25 +3,15 @@
 
 # In[ ]:
 
-
-import json
-import math
-import os
-
 import cv2
-from PIL import Image
 import numpy as np
 from keras import layers
 from keras.applications import DenseNet121
-from keras.callbacks import Callback, ModelCheckpoint
+from keras.callbacks import Callback
 from keras.preprocessing.image import ImageDataGenerator
 from keras.models import Sequential
 from keras.optimizers import Adam
-import matplotlib.pyplot as plt
-import pandas as pd
-from sklearn.model_selection import train_test_split
-from sklearn.metrics import cohen_kappa_score, accuracy_score
-import scipy
+from sklearn.metrics import cohen_kappa_score
 import tensorflow as tf
 from tqdm import tqdm
 
@@ -69,10 +59,10 @@ def create_datagen():
 data_generator = create_datagen().flow(x_train, y_train, batch_size=BATCH_SIZE, seed=2019)
 
 class Metrics(Callback):
-    def on_train_begin(self, logs={}):
+    def on_train_begin(self):
         self.val_kappas = []
 
-    def on_epoch_end(self, epoch, logs={}):
+    def on_epoch_end(self, epoch):
         X_val, y_val = self.validation_data[:2]
         y_val = y_val.sum(axis=1) - 1
         
@@ -81,7 +71,7 @@ class Metrics(Callback):
 
         _val_kappa = cohen_kappa_score(
             y_val,
-            y_pred, 
+            y_pred,
             weights='quadratic'
         )
 
@@ -117,7 +107,6 @@ def build_model():
         optimizer=Adam(lr=0.00005),
         metrics=['accuracy']
     )
-    
     return model
 
 model = build_model()
