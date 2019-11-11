@@ -17,7 +17,7 @@ from keras.applications.densenet import DenseNet121
 from keras.applications.inception_v3 import InceptionV3
 from keras.applications.mobilenet import MobileNet
 from keras.applications.xception import Xception
-from keras.callbacks import ModelCheckpoint,CSVLogger
+from keras.callbacks import ModelCheckpoint
 from keras.optimizers import Adam,RMSprop
 from keras.utils import to_categorical
 
@@ -51,7 +51,7 @@ def get_data(img_path,image_csv):
         X.append(cv2.resize(img,(256,256)))
         Y.append(image_csv['diagnosis'][i])
         bar.next()
-    bar.finish()   
+    bar.finish()  
     return np.array(X),np.array(Y)
     
 
@@ -76,10 +76,8 @@ def pretrained_model(model,img_shape,trainable = False,weights = None,optim='ada
         base_model = ResNet101V2(include_top = False,weights = weights,input_shape = img_shape)
     elif model == 'xception':
         base_model = Xception(include_top=False,weights= weights,input_shape = img_shape)
-        
     for layer in base_model.layers:
         layer.trainable = trainable
-        
     x = base_model.output
     x = GlobalAveragePooling2D()(x)
     x = Dropout(0.3)(x)
